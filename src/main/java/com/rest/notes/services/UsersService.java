@@ -1,0 +1,30 @@
+package com.rest.notes.services;
+
+import java.util.ArrayList;
+
+import com.rest.notes.models.User;
+import com.rest.notes.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+@Service
+public class UsersService implements UserDetailsService {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+
+        User existingUser = userRepository.findByEmail(email).orElseThrow(() ->
+                new UsernameNotFoundException("User not found"));
+
+        return new org.springframework.security.core.userdetails.User(
+                existingUser.getEmail(), existingUser.getPassword(), new ArrayList<>());
+    }
+
+}
+
